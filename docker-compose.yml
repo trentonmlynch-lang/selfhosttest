@@ -1,0 +1,18 @@
+services:
+  unraid-command-center:
+    build: .
+    container_name: unraid-command-center
+    restart: unless-stopped
+    ports:
+      - "8000:8000"
+    environment:
+      DOCKER_HOST: unix:///var/run/docker.sock
+    group_add:
+      - "${DOCKER_GID:-0}"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

@@ -1,0 +1,124 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#0a0d12">
+    <meta name="description" content="A live overview of your Unraid Docker server.">
+    <title>Unraid Command Center</title>
+    <link rel="stylesheet" href="/static/styles.css">
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar">
+        <a class="brand" href="/" aria-label="Unraid Command Center home">
+          <span class="brand-mark"><span></span><span></span><span></span></span>
+          <span class="brand-copy"><strong>UNRAID</strong><small>COMMAND CENTER</small></span>
+        </a>
+
+        <div class="sidebar-label">WORKSPACE</div>
+        <nav aria-label="Main navigation">
+          <a class="nav-link active" href="#overview">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></svg>
+            Overview
+          </a>
+          <a class="nav-link" href="#containers">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3M12 12v8.5"/></svg>
+            Containers
+            <span class="nav-count" id="nav-container-count">—</span>
+          </a>
+        </nav>
+
+        <div class="sidebar-bottom">
+          <div class="connection-card">
+            <span class="connection-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="16" height="6" rx="1.5"/><rect x="4" y="14" width="16" height="6" rx="1.5"/><path d="M8 7h.01M8 17h.01"/></svg></span>
+            <span><strong>Docker Engine</strong><small><i class="status-dot" id="sidebar-status-dot"></i><span id="sidebar-status">Connecting…</span></small></span>
+          </div>
+          <p class="sidebar-footnote">A clear view of your server.</p>
+        </div>
+      </aside>
+
+      <main class="main-content" id="overview">
+        <header class="topbar">
+          <div class="breadcrumb"><span>Workspace</span><span class="breadcrumb-slash">/</span><strong>Overview</strong></div>
+          <div class="topbar-right">
+            <span class="live-indicator"><i></i> LIVE STATUS</span>
+            <span class="topbar-divider"></span>
+            <span class="topbar-clock" id="last-updated">Waiting for server…</span>
+            <button class="icon-button" id="refresh-button" type="button" aria-label="Refresh dashboard" title="Refresh dashboard">
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7v5h-5M4 17v-5h5"/><path d="M6.1 9a6.5 6.5 0 0 1 10.8-2L20 12M4 12l3.1 5a6.5 6.5 0 0 0 10.8-2"/></svg>
+            </button>
+          </div>
+        </header>
+
+        <section class="page-heading">
+          <div>
+            <div class="eyebrow"><span class="eyebrow-line"></span> YOUR SERVER, AT A GLANCE</div>
+            <h1>Good to see you<span class="heading-period">.</span></h1>
+            <p class="page-subtitle">Here’s what’s happening across your Docker host.</p>
+          </div>
+          <div class="host-chip"><span class="host-chip-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg></span><span><small>CONNECTED HOST</small><strong id="host-name">Connecting…</strong></span></div>
+        </section>
+
+        <section class="stats-grid" aria-label="Server summary">
+          <article class="stat-card">
+            <div class="stat-top"><span>Running</span><span class="stat-icon green"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6"/></svg></span></div>
+            <div class="stat-value" id="running-count">—</div>
+            <div class="stat-caption"><span class="tiny-dot green-dot"></span>Containers online</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Stopped</span><span class="stat-icon amber"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="6" y="6" width="12" height="12" rx="2"/></svg></span></div>
+            <div class="stat-value" id="stopped-count">—</div>
+            <div class="stat-caption"><span class="tiny-dot amber-dot"></span>Containers inactive</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Total containers</span><span class="stat-icon blue"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7.5 12 3l8 4.5v9L12 21l-8-4.5z"/><path d="m4.5 7.8 7.5 4.3 7.5-4.3"/></svg></span></div>
+            <div class="stat-value" id="total-count">—</div>
+            <div class="stat-caption"><span class="tiny-dot blue-dot"></span>Across your host</div>
+          </article>
+          <article class="stat-card">
+            <div class="stat-top"><span>Images</span><span class="stat-icon violet"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 8 4.5v9L12 21l-8-4.5v-9z"/><path d="m8 5.3 8 4.5v4.4"/></svg></span></div>
+            <div class="stat-value" id="image-count">—</div>
+            <div class="stat-caption"><span class="tiny-dot violet-dot"></span>Available locally</div>
+          </article>
+        </section>
+
+        <section class="content-grid">
+          <article class="panel containers-panel" id="containers">
+            <div class="panel-heading">
+              <div><div class="section-kicker">DOCKER</div><h2>Containers</h2></div>
+              <span class="panel-badge"><i class="status-dot"></i><span id="container-summary">Loading</span></span>
+            </div>
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>NAME</th><th>IMAGE</th><th>STATUS</th></tr></thead>
+                <tbody id="container-list"><tr><td class="table-message" colspan="3">Connecting to Docker Engine…</td></tr></tbody>
+              </table>
+            </div>
+            <div class="panel-footer"><span>Read-only overview</span><span id="engine-version">Docker Engine —</span></div>
+          </article>
+
+          <aside class="side-panels">
+            <article class="panel host-panel">
+              <div class="panel-heading compact"><div><div class="section-kicker">SYSTEM</div><h2>Host details</h2></div><span class="host-detail-icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="12" rx="2"/><path d="M8 20h8m-4-4v4"/></svg></span></div>
+              <div class="detail-list">
+                <div class="detail-row"><span>Host name</span><strong id="detail-host-name">—</strong></div>
+                <div class="detail-row"><span>Operating system</span><strong id="operating-system">—</strong></div>
+                <div class="detail-row"><span>Engine version</span><strong id="detail-engine-version">—</strong></div>
+              </div>
+            </article>
+            <article class="tip-card">
+              <span class="tip-spark">✳</span>
+              <div class="tip-content"><span>AT A GLANCE</span><p>Your server overview refreshes automatically every 30 seconds.</p></div>
+              <div class="tip-decoration"></div>
+            </article>
+          </aside>
+        </section>
+
+        <footer class="page-footer"><span>UNRAID COMMAND CENTER</span><span>Connected to your Docker Engine</span></footer>
+      </main>
+    </div>
+    <div class="toast" id="error-message" role="status" aria-live="polite" hidden></div>
+    <script src="/static/app.js" defer></script>
+  </body>
+</html>

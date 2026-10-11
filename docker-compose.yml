@@ -1,18 +1,48 @@
+name: unraid-command-center
+
 services:
   unraid-command-center:
-    build: .
+    build:
+      context: .
+      dockerfile: Dockerfile
     container_name: unraid-command-center
-    restart: unless-stopped
-    ports:
-      - "8000:8000"
     environment:
-      DOCKER_HOST: unix:///var/run/docker.sock
-    group_add:
-      - "${DOCKER_GID:-0}"
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      DOCKER_HOST: tcp://docker-proxy:2375
+    ports:
+      - "8787:8000"
     read_only: true
-    tmpfs:
-      - /tmp
+    restart: unless-stopped
     security_opt:
       - no-new-privileges:true
+    tmpfs:
+      - /tmp
+    depends_on:
+      - docker-proxy
+    networks:
+      - frontend
+      - backend
+
+  docker-proxy:
+    image: tecnativa/docker-socket-proxy:latest
+    container_name: unraid-command-proxy
+    environment:
+      CONTAINERS: "1"
+      IMAGES: "1"
+      INFO: "1"
+      VERSION: "1"
+      POST: "0"
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    networks:
+      - backend
+
+networks:
+  frontend:
+    driver: bridge
+
+  backend:
+    driver: bridge
+    internal: true
